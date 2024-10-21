@@ -1,0 +1,135 @@
+<!-- Source Code By @yuvraj824 -->
+<html>
+<head>
+  <title>SKY CRICKET HD Online | Stalker Web</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+  <link rel="shortcut icon" href="assets/favicon.png"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/plyr@3.6.2/dist/plyr.css" />
+  <script src="https://cdn.jsdelivr.net/npm/plyr@3.6.12/dist/plyr.min.js"></script>
+  <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const player = new Plyr('#player');
+        });
+</script>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@1.1.4/dist/hls.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+  <style>
+    html {
+      font-family: Poppins;
+      background: #000;
+      margin: 0;
+      padding: 0
+    }
+    body { overflow: hidden; }
+    .loading-text { font-weight: bold !important; }
+    .plyr__video-wrapper::before {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 10;
+      content: '';
+      height: 35px;
+      width: 35px;
+      background-size: 35px auto, auto;
+    }
+    .plyr__video-wrapper::after {
+      position: absolute;
+      top: 100px;
+      left: 15px;
+      z-index: 15;
+      content: '';
+      height: 150px;
+      width: 350px;
+      background-size: 300px auto, auto;
+    }
+   .loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  }
+  .loading-text {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  }
+  .loading-text-words {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    animation: blur 3s linear infinite;
+    animation-delay: calc(0.2s * var(--i));
+  }
+  @keyframes blur {
+    0%, 100% { filter: blur(0px); }
+    50% { filter: blur(3px); }
+  }
+  #player-container { width: 100%; height: 100vh; }
+</style>
+</head>
+<script type='text/javascript' src='//eltontry.com/09/f1/e9/09f1e956c711aea6a898d5abbb78d092.js'></script>
+<div id="loading" class="loading">
+  <div class="loading-text">
+    <span class="loading-text-words" style="--i:0;">A</span><span class="loading-text-words" style="--i:1;">M</span><span class="loading-text-words" style="--i:2;">A</span><span class="loading-text-words" style="--i:3;">A</span><span class="loading-text-words" style="--i:4;">N</span><span class="loading-text-words" style="--i:5;">B</span><span class="loading-text-words" style="--i:6;">H</span><span class="loading-text-words" style="--i:7;">A</span><span class="loading-text-words" style="--i:8;">I</span><span class="loading-text-words" style="--i:9;"></span><span class="loading-text-words" style="--i:10;"></span><span class="loading-text-words" style="--i:11;"></span><span class="loading-text-words" style="--i:12;"></span><span class="loading-text-words" style="--i:13;"></span>  </div>
+</div>
+<video id="player" autoplay controls crossorigin poster="assets/plyr-bg.jpg" playsinline>
+  <source src="live.php?id=61362&vtoken=&e=.m3u8" type="application/x-mpegURL">
+</video>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const video = document.querySelector("video");
+  const source = video.getElementsByTagName("source")[0].src;
+  const defaultOptions = {};
+
+  if (Hls.isSupported()) {
+    const hls = new Hls();
+    hls.loadSource(source);
+
+    hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+      const availableQualities = hls.levels.map((l) => l.height);
+
+      defaultOptions.quality = {
+        default: availableQualities[0],
+        options: availableQualities,
+        forced: true,
+        onChange: (e) => updateQuality(e),
+      };
+      
+      initializePlayer();
+    });
+    hls.attachMedia(video);
+    window.hls = hls;
+  } else {
+    initializePlayer();
+  }
+
+function initializePlayer() {
+    const player = new Plyr(video, defaultOptions);
+    
+    // Wait for 2.5 seconds before transitioning
+    setTimeout(() => {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('player-container').style.display = 'block';
+      player.play();
+    }, 2500);
+  }
+
+  function updateQuality(newQuality) {
+    window.hls.levels.forEach((level, levelIndex) => {
+      if (level.height === newQuality) {
+        console.log("Found quality match with " + newQuality);
+        window.hls.currentLevel = levelIndex;
+      }
+    });
+  }
+});
+</script>
+</body>
+<script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool@latest'></script>
+</html>
